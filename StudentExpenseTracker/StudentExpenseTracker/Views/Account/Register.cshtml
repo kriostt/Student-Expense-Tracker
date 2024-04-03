@@ -1,0 +1,67 @@
+﻿@using StudentExpenseTracker.Models;
+<!-- declare model for this view -->
+@model Register
+
+@{
+	// set title of the view
+	ViewData["Title"] = "Register";
+}
+
+<div class="row d-flex align-items-center justify-content-center">
+	<div class="col-md-7 card p-3 mt-4">
+		<h2 class="text-center text-info">Register</h2>
+
+		<!-- form for user registration -->
+		<form asp-action="Register" method="post">
+			<!-- display validation errors -->
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<!-- label, input, and validation errors for name -->
+			<div class="mb-1">
+				<label asp-for="Name"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+
+			<!-- label, input, and validation errors for email -->
+			<div class="mb-1">
+				<label asp-for="Email"></label>
+				<input asp-for="Email" class="form-control" />
+				<span asp-validation-for="Email" class="text-danger"></span>
+			</div>
+
+			<!-- label, input, and validation errors for password -->
+			<div class="mb-1">
+				<label asp-for="Password"></label>
+				<input asp-for="Password" class="form-control" />
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+
+			<!-- label, input, and validation errors for confirming password -->
+			<div class="mb-1">
+				<label asp-for="ConfirmPassword"></label>
+				<input asp-for="ConfirmPassword" class="form-control" />
+				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+			</div>
+
+			<div class="row">
+				<!-- link to login page -->
+				<div class="col-8">
+					<a asp-action="Login" class="text-decoration-none float-start mt-2">Have an existing account?</a>
+				</div>
+
+				<!-- register button -->
+				<div class="col-4 mt-2">
+					<input type="submit" value="Register" class="btn btn-primary float-end" />
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- for client side validation -->
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

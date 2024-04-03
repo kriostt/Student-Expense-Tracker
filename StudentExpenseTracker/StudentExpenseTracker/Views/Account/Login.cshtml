@@ -1,0 +1,60 @@
+﻿@using StudentExpenseTracker.Models;
+<!-- declare model for this view -->
+@model Login
+
+@{
+	// set title of the view
+	ViewData["Title"] = "Login";
+}
+
+<div class="row d-flex align-items-center justify-content-center">
+	<div class="col-md-7 card p-3 mt-4">
+		<h2 class="text-center text-info">Login</h2>
+
+		<!-- form for user login-->
+		<form asp-action="Login" method="post">
+			<!-- display validation errors -->
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<!-- label, input, and validation errors for username -->
+			<div class="mb-1">
+				<label asp-for="Username"></label>
+				<input asp-for="Username" class="form-control"/>
+				<span asp-validation-for="Username" class="text-danger"></span>
+			</div>
+
+			<!-- label, input, and validation errors for password -->
+			<div class="mb-1">
+				<label asp-for="Password"></label>
+				<input asp-for="Password" class="form-control" />
+				<span asp-validation-for="Password" class="text-danger"></span>
+			</div>
+
+			<!-- Checkbox for "Remember Me" option -->
+			<div class="mb-1 form-check">
+				<label class="form-check-label">
+					<input asp-for="RememberMe" class="form-check-input" /> @Html.DisplayNameFor(a => a.RememberMe)
+				</label>
+			</div>
+
+			<div class="row">
+				<!-- link to register page -->
+				<div class="col-8">
+					<a asp-action="Register" class="text-decoration-none float-start mt-2">Don't have an account?</a>
+				</div>
+
+				<!-- login button -->
+				<div class="col-4">
+					<input type="submit" value="Login" class="btn btn-primary float-end" />
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- render partial scripts for client-side validation -->
+@section Scripts{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
