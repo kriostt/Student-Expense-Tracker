@@ -3,53 +3,66 @@
 	// set page title
 	ViewBag.Title = "Student Expense Tracker";
 }
+
 <div class="container my-5">
     <div class="row">
         <div class="col-md-4">
-            <div class="card mb-3">
+            <div class="card mb-3 bg-success text-white">
                 <div class="card-body">
                     <h5 class="card-title">Total Income</h5>
                     <!-- Display total income here -->
+                    <strong class="h4 font-weight-bold">$500</strong>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card mb-3">
+            <div class="card mb-3 bg-danger text-white">
                 <div class="card-body">
                     <h5 class="card-title">Total Expense</h5>
                     <!-- Display total expense here -->
+                    <strong class="h4 font-weight-bold">$100</strong>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card mb-3">
+            <div class="card mb-3 bg-primary text-white">
                 <div class="card-body">
                     <h5 class="card-title">Balance</h5>
                     <!-- Display balance here -->
+                    <strong class="h4 font-weight-bold">$400</strong>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<table class="table table-bordered table-striped">
-	<thead>
-		<tr>
-			<th>Category</th>
-			<th>Date</th>
-			<th>Amount</th>
-		</tr>
-	</thead>
+@if (Model.Count > 0)
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
 
-	<tbody>
-		<!-- loop through each transaction in the model -->
-		@foreach (var transaction in Model)
-		{
-			<tr>
-				<td>@transaction.Category</td>
-				<td>@transaction.Date</td>
-				<td>@transaction.Amount</td>
-			</tr>
-		}
-	</tbody>
-</table>
+        <tbody>
+            <!-- loop through each transaction in the model -->
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <td>@transaction.Category</td>
+                    <td>@transaction.Date</td>
+                    <td>@transaction.Amount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="text-center">
+        <h3>No transactions found.</h3>
+    </div>
+}
