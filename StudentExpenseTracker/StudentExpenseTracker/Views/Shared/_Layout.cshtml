@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,7 +10,7 @@
 
     <!-- bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <!-- bootstrap Icons CSS -->
+    <!-- bootstrap icons CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <!-- custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -15,13 +18,14 @@
 </head>
 <body>
     <header>
-        <div class="container-fluid px-0">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid px-0">
+                <!-- site name -->
                 <a class="navbar-brand ms-3" asp-controller="Home" asp-action="Index">Student Expense Tracker</a>
 
                 <!-- navbar links -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
                         <li class="nav-item">
                             <a class="nav-link text-light" asp-controller="Category" asp-action="Index">Categories</a>
                         </li>
@@ -37,13 +41,53 @@
                 <div>
                     <!-- Navbar icons -->
                     <div class="navbar-nav d-flex flex-row justify-content-end">
-                        <a class="nav-link me-3" href="#"><i class="bi bi-search"></i></a>
+                        <a class="nav-link me-3 ms-3" href="#"><i class="bi bi-search"></i></a>
                         <a class="nav-link me-3" href="#"><i class="bi bi-bell"></i></a>
-                        <a class="nav-link me-3" href="#"><i class="bi bi-person"></i></a>
+
+                        <!-- display dropdown according to user authentication -->
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <!-- dropdown for authenticated users -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person"></i>
+                                </a>
+
+                                <!-- logout link -->
+                                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-right">
+                                    <li>   
+                                        <a class="dropdown-item" asp-action="Logout" asp-controller="Account">
+                                            Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- dropdown for non-authenticated users -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person"></i>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-right">
+                                    <!-- register link -->
+                                    <li class="nav-item">                                      
+                                        <a class="nav-link text-light ms-3" asp-controller="Account" asp-action="Register">Register</a>
+                                    </li>
+
+                                    <!-- login link-->
+                                    <li class="nav-item">                                        
+                                        <a class="nav-link text-light ms-3" asp-controller="Account" asp-action="Login">Login</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
                     </div>
                 </div>
 
-                <!-- Toggle button -->
+                <!-- toggle button -->
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -53,26 +97,31 @@
                         aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-            </nav>  
-        </div>
+            </div>
+        </nav>
     </header>
 
     <div class="container">
         <main role="main" class="pb-3">
+            <!-- render page conten -->
             @RenderBody()
         </main>
     </div>
 
+    <!-- footer -->
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - StudentExpenseTracker
         </div>
     </footer>
 
-    <!-- Bootstrap Bundle with Popper -->
+    <!-- bootstrap JS-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- custom JS -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- render additional scripts -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

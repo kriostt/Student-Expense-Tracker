@@ -1,0 +1,27 @@
+/* show dropdown menu on hover */
+.navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* hide dropdown menu by default, with transition effect */
+.dropdown-menu {
+    display: none;
+    transition: display 0.3s ease;
+}
+
+/* position the dropdown menu to the right */
+.dropdown-menu-right {
+    max-width: calc(100vw - 10px);
+    right: 0;
+    left: auto;
+    position: absolute !important;
+}
+
+/* media query for smaller screens */
+@media (max-width: 991.98px) {
+    /* adjust position of right-aligned dropdown menu */
+    .dropdown-menu.dropdown-menu-right {
+        left: 0;
+        right: auto;
+    }
+}
