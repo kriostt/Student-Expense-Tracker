@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentExpenseTracker.Models;
 using System.Diagnostics;
 
 namespace StudentExpenseTracker.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         // instance of TransactionContext to interact with database
