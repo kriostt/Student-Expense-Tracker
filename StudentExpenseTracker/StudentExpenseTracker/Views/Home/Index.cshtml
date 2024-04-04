@@ -42,41 +42,61 @@
     </div>
 </div>
 
-<!-- filter form -->
-<form class="col-md-12" asp-action="Filter" method="get">
-    <div class="row">
-        <!-- category options -->
-        <div class="form-group col-md-3">
-            <label>Category: </label>
-            <select class="form-select" name="categoryName">
-                <option value="">All</option>
-                @foreach (var categoryName in ViewBag.DistinctCategoryNames)
-                {
-                    <option value="@categoryName" selected="@(ViewData["CategoryName"] as string == categoryName)">
-                        @categoryName
-                    </option>
-                }
-                
-            </select>
-        </div>
+<div class="row">
+    <!-- filter form -->
+    <form class="col-md-9" asp-action="Filter" method="get">
+        <div class="row">
+            <!-- category options -->
+            <div class="form-group col-md-3">
+                <label>Category: </label>
+                <select class="form-select" name="categoryName">
+                    <option value="">All</option>
+                    @foreach (var categoryName in ViewBag.DistinctCategoryNames)
+                    {
+                        <option value="@categoryName" selected="@(ViewData["CategoryName"] as string == categoryName)">
+                            @categoryName
+                        </option>
+                    }
 
-        <!-- transaction type options -->
-        <div class="form-group col-md-3">
-            <label>Type: </label>
-            <select class="form-select" name="type">
-                <option value="">All</option>
-                <option value="Income" selected="@(ViewData["Type"] as string == "Income")">Income</option>
-                <option value="Expense" selected="@(ViewData["Type"] as string == "Expense")">Expense</option>
-            </select>
-        </div>
+                </select>
+            </div>
 
-        <!-- filter and clear buttons -->
-        <div class="form-group col-md-2">
-            <button type="submit" class="btn btn-primary mt-4">Filter</button>
-            <a class="btn btn-secondary mt-4" asp-action="Index">Clear</a>
+            <!-- transaction type options -->
+            <div class="form-group col-md-3">
+                <label>Type: </label>
+                <select class="form-select" name="type">
+                    <option value="">All</option>
+                    <option value="Income" selected="@(ViewData["Type"] as string == "Income")">Income</option>
+                    <option value="Expense" selected="@(ViewData["Type"] as string == "Expense")">Expense</option>
+                </select>
+            </div>
+
+            <!-- filter and clear buttons -->
+            <div class="form-group col-md-3">
+                <button type="submit" class="btn btn-primary mt-4">Filter</button>
+                <a class="btn btn-secondary mt-4" asp-action="Index">Clear</a>
+            </div>
         </div>
+    </form>
+
+    <!-- sort by options -->
+    <div class="col-md-3">
+        <form asp-action="Filter" method="get">
+            <select class="form-select" name="sortBy" onchange="this.form.submit()">
+                <option value="">Sort By</option>
+                <option value="dateAscending" selected="@(ViewData["SortBy"] as string == "dateAscending")">Date: Ascending</option>
+                <option value="dateDescending" selected="@(ViewData["SortBy"] as string == "dateDescending")">Date: Descending</option>
+                <option value="amountAscending" selected="@(ViewData["SortBy"] as string == "amountAscending")">Amount: Ascending</option>
+                <option value="amountDescending" selected="@(ViewData["SortBy"] as string == "amountDescending")">Amount: Descending</option>              
+            </select>
+
+            <!-- hidden inputs to retain filter options -->
+            <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
+            <input type="hidden" name="type" value="@ViewData["Type"]" />
+        </form>
     </div>
-</form>
+</div>
+
 
 <!-- check if there are existing transactions -->
 @if (Model.Count > 0)
@@ -99,8 +119,8 @@
                 <tr>
                     <td>@transaction.Category.Name</td>
                     <td>@transaction.Description</td>
-                    <td>@transaction.Date</td>
-                    <td>@transaction.Amount</td>
+                    <td>@transaction.Date.ToShortDateString()</td>
+                    <td>$@transaction.Amount</td>
                 </tr>
             }
         </tbody>

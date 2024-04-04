@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentExpenseTracker.Models;
-using System.Diagnostics;
-using System.Transactions;
 
 namespace StudentExpenseTracker.Controllers
 {
@@ -22,7 +20,7 @@ namespace StudentExpenseTracker.Controllers
         // action method handle requests for the home page
         public IActionResult Index()
         {
-            // retrieves list of transactions with Category from database, ordered by date
+            // query the database to get transactions ordered by date, including Category
             var transactions = context.Transactions
                 .Include(t => t.Category)
                 .OrderBy(t => t.Date)
@@ -31,16 +29,17 @@ namespace StudentExpenseTracker.Controllers
             // pass distinct category names to the view
             ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
 
-            // pass list of transactions to Index.cshtml view
+            // pass list of transactions to Index.cshtml
             return View(transactions);
         }
 
         // action method for displaying the filtered transactions
-        public async Task<IActionResult> Filter(string categoryName, string type)
+        public async Task<IActionResult> Filter(string categoryName, string type, string sortBy)
         {
-            // Set categoryName and type in ViewData
+            // set categoryName, type, and sorting option in ViewData
             ViewData["CategoryName"] = categoryName;
             ViewData["Type"] = type;
+            ViewData["SortBy"] = sortBy;
 
             // query the database to get transactions, including Category
             var transactions = context.Transactions
@@ -67,8 +66,39 @@ namespace StudentExpenseTracker.Controllers
             // execute the query and retrieve the list of transactions
             var filteredTransactions = await transactions.ToListAsync();
 
-            // pass filtered transactions to Index.cshtml
-            return View("Index", filteredTransactions);
+            // pass filtered transactions to the sort action method
+            return Sort(filteredTransactions, sortBy);
+        }
+
+        public IActionResult Sort(List<Transaction> transactions, string sortBy)
+        {
+            // pass distinct category names to the view
+            ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
+
+            // check which sorting option was chosen
+            switch (sortBy)
+            {
+                // order the transaction list according to chosen sorting option
+                case "dateDescending":
+                    transactions = transactions.OrderByDescending(t => t.Date).ToList();
+                    break;
+                case "dateAscending":
+                    transactions = transactions.OrderBy(t => t.Date).ToList();
+                    break;
+                case "amountDescending":
+                    transactions = transactions.OrderByDescending(t => t.Amount).ToList();
+                    break;
+                case "amountAscending":
+                    transactions = transactions.OrderBy(t => t.Amount).ToList();
+                    break;
+                // set a default case when no sorting option is chosen
+                default:
+                    transactions = transactions.OrderBy(t => t.Date).ToList();
+                    break;
+            }
+
+            // pass sorted transactions to Index.cshtml
+            return View("Index", transactions);
         }
     }
 }
