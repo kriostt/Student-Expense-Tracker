@@ -15,7 +15,7 @@ namespace StudentExpenseTracker.Models
 
         // transaction amount
         [Required(ErrorMessage = "Please enter an amount.")]
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         // transaction description
         public string? Description { get; set; }
