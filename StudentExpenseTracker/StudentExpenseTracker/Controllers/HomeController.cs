@@ -34,9 +34,10 @@ namespace StudentExpenseTracker.Controllers
         }
 
         // action method for displaying the filtered transactions
-        public async Task<IActionResult> Filter(string categoryName, string type, string sortBy)
+        public async Task<IActionResult> Filter(string search, string categoryName, string type, string sortBy)
         {
-            // set categoryName, type, and sorting option in ViewData
+            // set search, categoryName, type, and sorting option in ViewData
+            ViewData["Search"] = search;
             ViewData["CategoryName"] = categoryName;
             ViewData["Type"] = type;
             ViewData["SortBy"] = sortBy;
@@ -49,6 +50,12 @@ namespace StudentExpenseTracker.Controllers
             // pass distinct category names to the view
             ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
 
+            // check if a search string was provided
+            if (!string.IsNullOrEmpty(search))
+            {
+                // filter by description
+                transactions = transactions.Where(t => t.Description.ToLower().Contains(search.ToLower()));
+            }
             // check if a category was selected
             if (!string.IsNullOrEmpty(categoryName))
             {
@@ -67,11 +74,14 @@ namespace StudentExpenseTracker.Controllers
             var filteredTransactions = await transactions.ToListAsync();
 
             // pass filtered transactions to the sort action method
-            return Sort(filteredTransactions, sortBy);
+            return Sort(filteredTransactions, sortBy, search);
         }
 
-        public IActionResult Sort(List<Transaction> transactions, string sortBy)
+        public IActionResult Sort(List<Transaction> transactions, string sortBy, string search)
         {
+            // set search in ViewData
+            ViewData["Search"] = search;
+
             // pass distinct category names to the view
             ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
 

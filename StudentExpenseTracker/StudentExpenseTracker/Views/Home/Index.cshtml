@@ -42,6 +42,27 @@
     </div>
 </div>
 
+<!-- search bar -->
+<form asp-action="Filter" method="get">
+    <div class="row mb-4">
+        <div class="form-group col-md-11">
+            <label>Search Transaction: </label>
+            <input type="text" class="form-control" name="search" value="@ViewData["Search"]" placeholder="Enter description" />
+        </div>
+
+        <div class="form-group col-md-1">
+            <button type="submit" class="btn btn-primary mt-4">Search</button>
+        </div>                 
+    </div>   
+
+    <!-- hidden inputs to retain filter options -->
+    <input type="hidden" name="search" value="@ViewData["Search"]" />
+    <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
+    <input type="hidden" name="type" value="@ViewData["Type"]" />
+    <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
+</form>
+
+<!-- filters -->
 <div class="row">
     <!-- filter form -->
     <form class="col-md-9" asp-action="Filter" method="get">
@@ -77,6 +98,10 @@
                 <a class="btn btn-secondary mt-4" asp-action="Index">Clear</a>
             </div>
         </div>
+
+        <!-- hidden inputs to retain filter options -->
+        <input type="hidden" name="search" value="@ViewData["Search"]" />
+        <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
     </form>
 
     <!-- sort by options -->
@@ -91,6 +116,7 @@
             </select>
 
             <!-- hidden inputs to retain filter options -->
+            <input type="hidden" name="search" value="@ViewData["Search"]" />
             <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
             <input type="hidden" name="type" value="@ViewData["Type"]" />
         </form>
