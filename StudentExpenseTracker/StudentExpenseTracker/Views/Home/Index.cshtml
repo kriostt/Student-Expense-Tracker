@@ -42,11 +42,47 @@
     </div>
 </div>
 
-<!-- check if there are transactions exist -->
+<!-- filter form -->
+<form class="col-md-12" asp-action="Filter" method="get">
+    <div class="row">
+        <!-- category options -->
+        <div class="form-group col-md-3">
+            <label>Category: </label>
+            <select class="form-select" name="categoryName">
+                <option value="">All</option>
+                @foreach (var categoryName in ViewBag.DistinctCategoryNames)
+                {
+                    <option value="@categoryName" selected="@(ViewData["CategoryName"] as string == categoryName)">
+                        @categoryName
+                    </option>
+                }
+                
+            </select>
+        </div>
+
+        <!-- transaction type options -->
+        <div class="form-group col-md-3">
+            <label>Type: </label>
+            <select class="form-select" name="type">
+                <option value="">All</option>
+                <option value="Income" selected="@(ViewData["Type"] as string == "Income")">Income</option>
+                <option value="Expense" selected="@(ViewData["Type"] as string == "Expense")">Expense</option>
+            </select>
+        </div>
+
+        <!-- filter and clear buttons -->
+        <div class="form-group col-md-2">
+            <button type="submit" class="btn btn-primary mt-4">Filter</button>
+            <a class="btn btn-secondary mt-4" asp-action="Index">Clear</a>
+        </div>
+    </div>
+</form>
+
+<!-- check if there are existing transactions -->
 @if (Model.Count > 0)
 {
     <!-- display transactions in a table -->
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped mt-4">
         <thead>
             <tr>
                 <th>Category</th>
@@ -61,7 +97,7 @@
             @foreach (var transaction in Model)
             {
                 <tr>
-                    <td>@transaction.Category</td>
+                    <td>@transaction.Category.Name</td>
                     <td>@transaction.Description</td>
                     <td>@transaction.Date</td>
                     <td>@transaction.Amount</td>
