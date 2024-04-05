@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentExpenseTracker.Models;
+using System.Globalization;
 
 namespace StudentExpenseTracker.Controllers
 {
@@ -18,8 +19,30 @@ namespace StudentExpenseTracker.Controllers
         }
 
         // action method handle requests for the home page
-        public IActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            List<Transaction> SelectedTransactions = await context.Transactions
+                .Include(x => x.Category)
+                .ToListAsync();
+
+            // Total Income 
+            double TotalIncome = SelectedTransactions
+                .Where(i => i.Category.Type == "Income")
+                .Sum(j => j.Amount);
+            ViewBag.TotalIncome = TotalIncome.ToString("C2");
+
+            // Total Expense 
+            double TotalExpense = SelectedTransactions
+                .Where(i => i.Category.Type == "Expense")
+                .Sum(j => j.Amount);
+            ViewBag.TotalExpense = TotalExpense.ToString("C2");
+
+            // Balance 
+            double Balance = TotalIncome - TotalExpense;
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+            culture.NumberFormat.CurrencyNegativePattern = 1;
+            ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
+
             // query the database to get transactions ordered by date, including Category
             var transactions = context.Transactions
                 .Include(t => t.Category)
@@ -89,6 +112,24 @@ namespace StudentExpenseTracker.Controllers
             // execute the query and retrieve the list of transactions
             var filteredTransactions = await transactions.ToListAsync();
 
+            // Calculate Total Income
+            double TotalIncome = filteredTransactions
+                .Where(i => i.Category.Type == "Income")
+                .Sum(j => j.Amount);
+            ViewBag.TotalIncome = TotalIncome.ToString("C2");
+
+            // Calculate Total Expense
+            double TotalExpense = filteredTransactions
+                .Where(i => i.Category.Type == "Expense")
+                .Sum(j => j.Amount);
+            ViewBag.TotalExpense = TotalExpense.ToString("C2");
+
+            // Calculate Balance
+            double Balance = TotalIncome - TotalExpense;
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+            culture.NumberFormat.CurrencyNegativePattern = 1;
+            ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
+
             // pass filtered transactions to the sort action method
             return Sort(filteredTransactions, search, startDate, endDate, sortBy);
         }
@@ -124,6 +165,24 @@ namespace StudentExpenseTracker.Controllers
                     transactions = transactions.OrderBy(t => t.Date).ToList();
                     break;
             }
+
+            // Calculate Total Income
+            double TotalIncome = transactions
+                .Where(i => i.Category.Type == "Income")
+                .Sum(j => j.Amount);
+            ViewBag.TotalIncome = TotalIncome.ToString("C2");
+
+            // Calculate Total Expense
+            double TotalExpense = transactions
+                .Where(i => i.Category.Type == "Expense")
+                .Sum(j => j.Amount);
+            ViewBag.TotalExpense = TotalExpense.ToString("C2");
+
+            // Calculate Balance
+            double Balance = TotalIncome - TotalExpense;
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+            culture.NumberFormat.CurrencyNegativePattern = 1;
+            ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
 
             // pass sorted transactions to Index.cshtml
             return View("Index", transactions);

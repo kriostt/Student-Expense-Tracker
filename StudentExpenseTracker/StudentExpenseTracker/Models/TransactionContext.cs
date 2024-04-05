@@ -12,5 +12,49 @@ namespace StudentExpenseTracker.Models
 
         // represents collection of categories in the database
         public DbSet<Category> Categories { get; set; }
+
+        // Seed initial data for categories using modelBuilder
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Category>().HasData(
+                new Category
+                {
+                    CategoryId = 1,
+                    Name = "Salary",
+                    Type = "Income",
+                },
+                new Category
+                {
+                    CategoryId = 2,
+                    Name = "Grocery",
+                    Type = "Expense",
+
+                },
+                new Category
+                {
+                    CategoryId = 3,
+                    Name = "Entertainment",
+                    Type = "Expense",
+                },
+                new Category
+                {
+                    CategoryId = 4,
+                    Name = "Eating outside",
+                    Type = "Expense",
+                },
+                new Category
+                {
+                    CategoryId = 5,
+                    Name = "Health and Wellness",
+                    Type = "Expense",
+                },
+                new Category
+                {
+                    CategoryId = 6,
+                    Name = "Shopping",
+                    Type = "Expense",
+                }
+             );
+        }
     }
 }

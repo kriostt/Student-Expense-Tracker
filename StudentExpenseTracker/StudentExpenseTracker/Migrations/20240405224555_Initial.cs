@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace StudentExpenseTracker.Migrations
 {
     /// <inheritdoc />
@@ -45,6 +47,19 @@ namespace StudentExpenseTracker.Migrations
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoryId", "Name", "Type" },
+                values: new object[,]
+                {
+                    { 1, "Salary", "Income" },
+                    { 2, "Grocery", "Expense" },
+                    { 3, "Entertainment", "Expense" },
+                    { 4, "Eating outside", "Expense" },
+                    { 5, "Health and Wellness", "Expense" },
+                    { 6, "Shopping", "Expense" }
                 });
 
             migrationBuilder.CreateIndex(

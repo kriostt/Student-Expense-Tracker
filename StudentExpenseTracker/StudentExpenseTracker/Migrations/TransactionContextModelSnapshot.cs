@@ -41,6 +41,44 @@ namespace StudentExpenseTracker.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            Name = "Salary",
+                            Type = "Income"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            Name = "Grocery",
+                            Type = "Expense"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Entertainment",
+                            Type = "Expense"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            Name = "Eating outside",
+                            Type = "Expense"
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            Name = "Health and Wellness",
+                            Type = "Expense"
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            Name = "Shopping",
+                            Type = "Expense"
+                        });
                 });
 
             modelBuilder.Entity("StudentExpenseTracker.Models.Transaction", b =>
