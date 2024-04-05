@@ -59,16 +59,19 @@
     <input type="hidden" name="search" value="@ViewData["Search"]" />
     <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
     <input type="hidden" name="type" value="@ViewData["Type"]" />
+    <input type="hidden" name="startDate" value="@ViewData["StartDate"]" />
+    <input type="hidden" name="endDate" value="@ViewData["EndDate"]" />
     <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
 </form>
 
 <!-- filters -->
 <div class="row">
     <!-- filter form -->
-    <form class="col-md-9" asp-action="Filter" method="get">
+    <form class="col-md-10" asp-action="Filter" method="get">
         <div class="row">
+
             <!-- category options -->
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
                 <label>Category: </label>
                 <select class="form-select" name="categoryName">
                     <option value="">All</option>
@@ -78,12 +81,11 @@
                             @categoryName
                         </option>
                     }
-
                 </select>
             </div>
 
             <!-- transaction type options -->
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
                 <label>Type: </label>
                 <select class="form-select" name="type">
                     <option value="">All</option>
@@ -92,8 +94,22 @@
                 </select>
             </div>
 
+            <!-- start date -->
+            <div class="form-group col-md-2">
+                <label>Start Date: </label>
+                <input type="date" class="form-control" name="startDate"
+                       value="@(ViewData["StartDate"] as DateTime? != null ? ((DateTime?)ViewData["StartDate"])?.ToString("yyyy-MM-dd") : "")" />
+            </div>
+
+            <!-- end date -->
+            <div class="form-group col-md-2">
+                <label>End Date: </label>
+                <input type="date" class="form-control" name="endDate"
+                       value="@(ViewData["EndDate"] as DateTime? != null ? ((DateTime?)ViewData["EndDate"])?.ToString("yyyy-MM-dd") : "")" />
+            </div>
+            
             <!-- filter and clear buttons -->
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
                 <button type="submit" class="btn btn-primary mt-4">Filter</button>
                 <a class="btn btn-secondary mt-4" asp-action="Index">Clear</a>
             </div>
@@ -101,28 +117,31 @@
 
         <!-- hidden inputs to retain filter options -->
         <input type="hidden" name="search" value="@ViewData["Search"]" />
+        <input type="hidden" name="startDate" value="@ViewData["StartDate"]" />
+        <input type="hidden" name="endDate" value="@ViewData["EndDate"]" />
         <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
     </form>
 
     <!-- sort by options -->
-    <div class="col-md-3">
+    <div class="col-md-2">
         <form asp-action="Filter" method="get">
             <select class="form-select" name="sortBy" onchange="this.form.submit()">
                 <option value="">Sort By</option>
                 <option value="dateAscending" selected="@(ViewData["SortBy"] as string == "dateAscending")">Date: Ascending</option>
                 <option value="dateDescending" selected="@(ViewData["SortBy"] as string == "dateDescending")">Date: Descending</option>
                 <option value="amountAscending" selected="@(ViewData["SortBy"] as string == "amountAscending")">Amount: Ascending</option>
-                <option value="amountDescending" selected="@(ViewData["SortBy"] as string == "amountDescending")">Amount: Descending</option>              
+                <option value="amountDescending" selected="@(ViewData["SortBy"] as string == "amountDescending")">Amount: Descending</option>
             </select>
 
             <!-- hidden inputs to retain filter options -->
             <input type="hidden" name="search" value="@ViewData["Search"]" />
             <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
             <input type="hidden" name="type" value="@ViewData["Type"]" />
+            <input type="hidden" name="startDate" value="@ViewData["StartDate"]" />
+            <input type="hidden" name="endDate" value="@ViewData["EndDate"]" />
         </form>
     </div>
 </div>
-
 
 <!-- check if there are existing transactions -->
 @if (Model.Count > 0)
