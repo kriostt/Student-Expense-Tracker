@@ -1,0 +1,63 @@
+﻿@model IEnumerable<StudentExpenseTracker.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<!-- Heading for the category page -->
+<h1 class="mt-5">Categories</h1>
+
+<div class="mt-4">
+    <!-- Button to add a new category -->
+    <a class="btn btn-success" asp-action="Add">Add Category</a>
+    <!-- Button to go back to the home page -->
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+</div>
+
+<!-- check if there are existing categories -->
+@if (Model.Any())
+
+{
+    <!-- display categories in a table -->
+    <table class="table table-bordered table-striped mt-4">
+    <thead>
+        <tr>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <!-- loop through each category in the model -->
+    @foreach (var item in Model) {
+            <tr>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td class="text-center">
+                   <a asp-action="Edit" asp-route-id="@item.CategoryId" class="me-3"><i class="bi bi-pencil-fill"></i></a>
+                   <a asp-action="Delete" asp-route-id="@item.CategoryId"><i class="bi bi-trash-fill"></i></a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+}
+else
+{
+    <!-- display message if no categories found -->
+    <div class="text-center mt-5">
+        <h3>No categories found.</h3>
+    </div>
+}
+
+
+

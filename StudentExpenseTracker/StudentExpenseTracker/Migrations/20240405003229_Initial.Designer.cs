@@ -12,7 +12,7 @@ using StudentExpenseTracker.Models;
 namespace StudentExpenseTracker.Migrations
 {
     [DbContext(typeof(TransactionContext))]
-    [Migration("20240403033752_Initial")]
+    [Migration("20240405003229_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -32,10 +32,6 @@ namespace StudentExpenseTracker.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
-
-                    b.Property<string>("Colour")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -58,8 +54,8 @@ namespace StudentExpenseTracker.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");

@@ -11,10 +11,6 @@ namespace StudentExpenseTracker.Models
         [Required(ErrorMessage = "Please enter a name.")]
         public string Name { get; set; }
 
-        // category colour
-        [Required(ErrorMessage = "Please select a colour.")]
-        public string Colour { get; set; }
-
         // category type (expense or income)
         [Required(ErrorMessage = "Please select a type.")]
         public string Type { get; set; }

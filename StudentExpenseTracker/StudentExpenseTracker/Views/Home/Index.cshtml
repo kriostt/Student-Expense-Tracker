@@ -3,6 +3,29 @@
 @{
 	// set page title
 	ViewBag.Title = "Student Expense Tracker";
+    // Initialize variables for balance, income, and expense
+    double totalIncome = 0;
+    double totalExpense = 0;
+
+    // Calculate income and expense
+    foreach (var transaction in Model)
+    {
+        var category = transaction.Category; 
+        if (category != null)
+        {
+            if (category.Type == "Income")
+            {
+                totalIncome += transaction.Amount;
+            }
+            else if (category.Type == "Expense")
+            {
+                totalExpense += transaction.Amount;
+            }
+        }
+    }
+
+    // Calculate balance
+    double balance = totalIncome - totalExpense;
 }
 
 <div class="container my-5">
@@ -13,7 +36,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Income</h5>
                     <!-- Display total income here -->
-                    <strong class="h4 font-weight-bold">$500</strong>
+                    <strong class="h4 font-weight-bold">@totalIncome.ToString("C2")</strong>
                 </div>
             </div>
         </div>
@@ -24,7 +47,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Expense</h5>
                     <!-- Display total expense here -->
-                    <strong class="h4 font-weight-bold">$100</strong>
+                    <strong class="h4 font-weight-bold">@totalExpense.ToString("C2")</strong>
                 </div>
             </div>
         </div>
@@ -35,7 +58,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Balance</h5>
                     <!-- Display balance here -->
-                    <strong class="h4 font-weight-bold">$400</strong>
+                    <strong class="h4 font-weight-bold">@balance.ToString("C2")</strong>
                 </div>
             </div>
         </div>
@@ -99,6 +122,10 @@
             </div>
         </div>
 
+        <!-- button to add a new transaction -->
+
+        <a class="btn btn-success mt-4" asp-controller="Transaction" asp-action="Add">Add Transaction</a>
+
         <!-- hidden inputs to retain filter options -->
         <input type="hidden" name="search" value="@ViewData["Search"]" />
         <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
@@ -131,10 +158,11 @@
     <table class="table table-bordered table-striped mt-4">
         <thead>
             <tr>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Amount</th>
+                <th class="text-center">Category</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Amount</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
 
@@ -143,10 +171,15 @@
             @foreach (var transaction in Model)
             {
                 <tr>
-                    <td>@transaction.Category.Name</td>
-                    <td>@transaction.Description</td>
-                    <td>@transaction.Date.ToShortDateString()</td>
-                    <td>$@transaction.Amount</td>
+                    <td class="text-center">@transaction.Category.Name</td>
+                    <td class="text-center">@transaction.Description</td>
+                    <td class="text-center">@transaction.Date.ToShortDateString()</td>
+                    <td class="text-center">@transaction.FormattedAmount</td>
+                    <td class="text-center">
+                        <a asp-controller="Transaction" asp-action="Edit" asp-route-id="@transaction.TransactionId" class="me-3"><i class="bi bi-pencil-fill"></i></a>
+                        <a asp-controller="Transaction" asp-action="Delete" asp-route-id="@transaction.TransactionId"><i class="bi bi-trash-fill"></i></a>
+                    </td>
+
                 </tr>
             }
         </tbody>
@@ -155,7 +188,7 @@
 else
 {
     <!-- display message if no transactions found -->
-    <div class="text-center">
+    <div class="text-center mt-5">
         <h3>No transactions found.</h3>
     </div>
 }
