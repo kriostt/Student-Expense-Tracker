@@ -34,12 +34,14 @@ namespace StudentExpenseTracker.Controllers
         }
 
         // action method for displaying the filtered transactions
-        public async Task<IActionResult> Filter(string search, string categoryName, string type, string sortBy)
+        public async Task<IActionResult> Filter(string search, string categoryName, string type, DateTime? startDate, DateTime? endDate, string sortBy)
         {
-            // set search, categoryName, type, and sorting option in ViewData
+            // set variables in ViewData
             ViewData["Search"] = search;
             ViewData["CategoryName"] = categoryName;
             ViewData["Type"] = type;
+            ViewData["StartDate"] = startDate;
+            ViewData["EndDate"] = endDate;
             ViewData["SortBy"] = sortBy;
 
             // query the database to get transactions, including Category
@@ -70,17 +72,33 @@ namespace StudentExpenseTracker.Controllers
                 transactions = transactions.Where(t => t.Category.Type == type);
             }
 
+            // check if start date was provided
+            if (startDate != null)
+            {
+                // if start date provided, find transactions with date greater than or equal to provided date
+                transactions = transactions.Where(t => t.Date.Date >= startDate.Value.Date);
+            }
+
+            // check if end date was provided
+            if (endDate != null)
+            {
+                // if end date provided, find transactions with date less than or equal to provided date
+                transactions = transactions.Where(t => t.Date.Date <= endDate.Value.Date);
+            }
+
             // execute the query and retrieve the list of transactions
             var filteredTransactions = await transactions.ToListAsync();
 
             // pass filtered transactions to the sort action method
-            return Sort(filteredTransactions, sortBy, search);
+            return Sort(filteredTransactions, search, startDate, endDate, sortBy);
         }
 
-        public IActionResult Sort(List<Transaction> transactions, string sortBy, string search)
+        public IActionResult Sort(List<Transaction> transactions, string search, DateTime? startDate, DateTime? endDate, string sortBy)
         {
-            // set search in ViewData
+            // set variables in ViewData
             ViewData["Search"] = search;
+            ViewData["StartDate"] = startDate;
+            ViewData["EndDate"] = endDate;
 
             // pass distinct category names to the view
             ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
