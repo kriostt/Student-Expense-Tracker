@@ -93,9 +93,15 @@
                     'rgb(255, 99, 132)',
                     'rgb(54, 162, 235)',
                     'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)',
-                    'rgb(153, 102, 255)',
-                    'rgb(255, 159, 64)'
+                    'rgb(255, 159, 64)',
+                    'rgb(75, 192, 192)',     
+                    'rgb(153, 102, 255)',    
+                    'rgb(255, 128, 128)',    
+                    'rgb(128, 191, 128)',    
+                    'rgb(255, 255, 128)',    
+                    'rgb(128, 128, 255)',   
+                    'rgb(191, 128, 255)',    
+                    'rgb(255, 191, 128)'     
                 ],
                 hoverOffset: 4
             }]
@@ -106,6 +112,15 @@
             type: 'doughnut',
             data: data,
             options: {
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var datasetLabel = data.labels[tooltipItem.index] || '';
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            return datasetLabel + ': ' + value.toFixed(2); 
+                        }
+                    }
+                }
             }
         });
 
