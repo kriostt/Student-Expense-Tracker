@@ -1,9 +1,11 @@
 ﻿using StudentExpenseTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentExpenseTracker.Controllers
 {
+    [Authorize]
     public class AnalyticsController : Controller
     {
         private readonly TransactionContext _context;
