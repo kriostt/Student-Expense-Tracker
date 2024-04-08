@@ -45,10 +45,32 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// middleware for handling unauthorized requests
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path;
+    if (!context.User.Identity.IsAuthenticated &&
+        path != "/Account/Login" &&
+        path != "/Account/Register")
+    {
+        context.Response.Redirect("/Account/Login");
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    // enable attribute routing
+    endpoints.MapControllers();
+
+    // map pattern for default route
+    endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();
