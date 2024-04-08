@@ -12,6 +12,7 @@ namespace StudentExpenseTracker.Models
 
         // represents collection of categories in the database
         public DbSet<Category> Categories { get; set; }
+        public object Budgets { get; internal set; }
 
         // Seed initial data for categories using modelBuilder
         protected override void OnModelCreating(ModelBuilder modelBuilder)
