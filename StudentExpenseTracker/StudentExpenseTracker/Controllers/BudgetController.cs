@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentExpenseTracker.Models;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace StudentExpenseTracker.Controllers
 {
+    [Authorize]
     public class BudgetController : Controller
     {
         private readonly TransactionContext _context;
