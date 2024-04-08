@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentExpenseTracker.Models;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace StudentExpenseTracker.Controllers
         // Action method for displaying the form to create a new budget
         public IActionResult Create()
         {
-            ViewBag.Categories = _context.Categories.ToList();
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
             return View();
         }
 
@@ -117,9 +118,9 @@ namespace StudentExpenseTracker.Controllers
         }
 
         // Action method for handling the deletion of a budget
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var budget = await _context.Budgets.FindAsync(id);
             _context.Budgets.Remove(budget);

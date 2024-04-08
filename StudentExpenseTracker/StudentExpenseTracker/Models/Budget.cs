@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentExpenseTracker.Models
 {
@@ -12,9 +13,9 @@ namespace StudentExpenseTracker.Models
         public string Name { get; set; }
 
         // Category for which the budget is set
-        [Required(ErrorMessage = "Please select a category.")]
+        [DisplayName("Category")]
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
         // Budget amount
         [Required(ErrorMessage = "Please enter a budget amount.")]

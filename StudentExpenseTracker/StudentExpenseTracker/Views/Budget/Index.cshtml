@@ -1,30 +1,52 @@
-﻿@model List<Budget>
+﻿@model IEnumerable<StudentExpenseTracker.Models.Budget>
 
-<h2>Budgets</h2>
+@{
+    ViewData["Title"] = "Budgets";
+}
 
-<p><a asp-action="Create">Create New Budget</a></p>
+<h1 class="mt-5">Budgets</h1>
 
-<table class="table">
+<div class="mt-4">
+    <a class="btn btn-success" asp-action="Create">Create New Budget</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+</div>
+
+@if (Model.Any())
+
+{
+
+    <table class="table table-bordered table-striped mt-4">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Amount</th>
-            <th>Category</th>
-            <th></th>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="text-center">
+                    @Html.DisplayNameFor(model => model.Amount)
+            </th>
+            <th class="text-center">
+                    @Html.DisplayNameFor(model => model.Category)
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var budget in Model)
         {
             <tr>
-                <td>@budget.Name</td>
-                <td>@budget.Amount</td>
-                <td>@budget.Category.Name</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@budget.BudgetId">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@budget.BudgetId">Delete</a>
-                </td>
+                <td class="text-center">@budget.Name</td>
+                <td class="text-center">@budget.Amount</td>
+                <td class="text-center">@budget.Category.Name</td>
             </tr>
         }
     </tbody>
 </table>
+}
+
+else
+
+    {
+        <!-- display message if no budgets found -->
+        <div class="text-center mt-5">
+            <h3>No budgets found.</h3>
+        </div>
+    }
