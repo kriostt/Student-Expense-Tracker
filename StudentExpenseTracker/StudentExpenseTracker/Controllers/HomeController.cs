@@ -20,6 +20,8 @@ namespace StudentExpenseTracker.Controllers
         }
 
         // action method handle requests for the home page
+        [HttpGet]
+        [Route("/")]
         public async Task<ActionResult> Index()
         {
             List<Transaction> SelectedTransactions = await context.Transactions
@@ -73,10 +75,10 @@ namespace StudentExpenseTracker.Controllers
             // pass distinct category names to the view
             ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
 
-            // Retrieve the filtered transactions based on provided parameters
+            // retrieve the filtered transactions based on provided parameters
             var filteredTransactions = GetFilteredTransactions(search, categoryName, type, startDate, endDate);
 
-            // Apply sorting logic
+            // apply sorting logic
             var sortedTransactions = ApplySorting(filteredTransactions, sortBy);
 
             // Calculate Total Income
@@ -97,7 +99,7 @@ namespace StudentExpenseTracker.Controllers
             culture.NumberFormat.CurrencyNegativePattern = 1;
             ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
 
-            // Pass sorted transactions to the Index view
+            // pass sorted transactions to the Index view
             return View("Index", sortedTransactions);
         }
 
