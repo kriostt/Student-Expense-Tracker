@@ -7,6 +7,7 @@ using System.Globalization;
 namespace StudentExpenseTracker.Controllers
 {
     [Authorize]
+    [Route("Home")]
     public class HomeController : Controller
     {
         // instance of TransactionContext to interact with database
@@ -57,7 +58,9 @@ namespace StudentExpenseTracker.Controllers
         }
 
         // action method for displaying the filtered transactions
-        public async Task<IActionResult> Filter(string search, string categoryName, string type, DateTime? startDate, DateTime? endDate, string sortBy)
+        [HttpGet]
+        [Route("[action]/{search?}/{categoryName?}/{type?}/{startDate?}/{endDate?}/{sortBy?}")]
+        public IActionResult Filter(string search, string categoryName, string type, DateTime? startDate, DateTime? endDate, string sortBy)
         {
             // set variables in ViewData
             ViewData["Search"] = search;
@@ -67,125 +70,86 @@ namespace StudentExpenseTracker.Controllers
             ViewData["EndDate"] = endDate;
             ViewData["SortBy"] = sortBy;
 
-            // query the database to get transactions, including Category
-            var transactions = context.Transactions
-                .Include(t => t.Category)
-                .AsQueryable();
-
             // pass distinct category names to the view
             ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
 
-            // check if a search string was provided
+            // Retrieve the filtered transactions based on provided parameters
+            var filteredTransactions = GetFilteredTransactions(search, categoryName, type, startDate, endDate);
+
+            // Apply sorting logic
+            var sortedTransactions = ApplySorting(filteredTransactions, sortBy);
+
+            // Calculate Total Income
+            double TotalIncome = sortedTransactions
+                .Where(i => i.Category.Type == "Income")
+                .Sum(j => j.Amount);
+            ViewBag.TotalIncome = TotalIncome.ToString("C2");
+
+            // Calculate Total Expense
+            double TotalExpense = sortedTransactions
+                .Where(i => i.Category.Type == "Expense")
+                .Sum(j => j.Amount);
+            ViewBag.TotalExpense = TotalExpense.ToString("C2");
+
+            // Calculate Balance
+            double Balance = TotalIncome - TotalExpense;
+            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
+            culture.NumberFormat.CurrencyNegativePattern = 1;
+            ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
+
+            // Pass sorted transactions to the Index view
+            return View("Index", sortedTransactions);
+        }
+
+        // helper method to retrieve filtered transactions
+        private IQueryable<Transaction> GetFilteredTransactions(string search, string categoryName, string type, DateTime? startDate, DateTime? endDate)
+        {
+            var transactions = context.Transactions.Include(t => t.Category).AsQueryable();
+
             if (!string.IsNullOrEmpty(search))
             {
-                // filter by description
                 transactions = transactions.Where(t => t.Description.ToLower().Contains(search.ToLower()));
             }
-            // check if a category was selected
+
             if (!string.IsNullOrEmpty(categoryName))
             {
-                // filter by category name
                 transactions = transactions.Where(t => t.Category.Name == categoryName);
             }
 
-            // check if a category type was selected
             if (!string.IsNullOrEmpty(type))
             {
-                // filter by type
                 transactions = transactions.Where(t => t.Category.Type == type);
             }
 
-            // check if start date was provided
             if (startDate != null)
             {
-                // if start date provided, find transactions with date greater than or equal to provided date
                 transactions = transactions.Where(t => t.Date.Date >= startDate.Value.Date);
             }
 
-            // check if end date was provided
             if (endDate != null)
             {
-                // if end date provided, find transactions with date less than or equal to provided date
                 transactions = transactions.Where(t => t.Date.Date <= endDate.Value.Date);
             }
 
-            // execute the query and retrieve the list of transactions
-            var filteredTransactions = await transactions.ToListAsync();
-
-            // Calculate Total Income
-            double TotalIncome = filteredTransactions
-                .Where(i => i.Category.Type == "Income")
-                .Sum(j => j.Amount);
-            ViewBag.TotalIncome = TotalIncome.ToString("C2");
-
-            // Calculate Total Expense
-            double TotalExpense = filteredTransactions
-                .Where(i => i.Category.Type == "Expense")
-                .Sum(j => j.Amount);
-            ViewBag.TotalExpense = TotalExpense.ToString("C2");
-
-            // Calculate Balance
-            double Balance = TotalIncome - TotalExpense;
-            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
-            culture.NumberFormat.CurrencyNegativePattern = 1;
-            ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
-
-            // pass filtered transactions to the sort action method
-            return Sort(filteredTransactions, search, startDate, endDate, sortBy);
+            return transactions;
         }
 
-        public IActionResult Sort(List<Transaction> transactions, string search, DateTime? startDate, DateTime? endDate, string sortBy)
+        // helper method to apply sorting
+        private List<Transaction> ApplySorting(IQueryable<Transaction> transactions, string sortBy)
         {
-            // set variables in ViewData
-            ViewData["Search"] = search;
-            ViewData["StartDate"] = startDate;
-            ViewData["EndDate"] = endDate;
-
-            // pass distinct category names to the view
-            ViewBag.DistinctCategoryNames = context.Categories.Select(c => c.Name).Distinct().ToList();
-
-            // check which sorting option was chosen
             switch (sortBy)
             {
-                // order the transaction list according to chosen sorting option
                 case "dateDescending":
-                    transactions = transactions.OrderByDescending(t => t.Date).ToList();
-                    break;
+                    return transactions.OrderByDescending(t => t.Date).ToList();
                 case "dateAscending":
-                    transactions = transactions.OrderBy(t => t.Date).ToList();
-                    break;
+                    return transactions.OrderBy(t => t.Date).ToList();
                 case "amountDescending":
-                    transactions = transactions.OrderByDescending(t => t.Amount).ToList();
-                    break;
+                    return transactions.OrderByDescending(t => t.Amount).ToList();
                 case "amountAscending":
-                    transactions = transactions.OrderBy(t => t.Amount).ToList();
-                    break;
-                // set a default case when no sorting option is chosen
+                    return transactions.OrderBy(t => t.Amount).ToList();
                 default:
-                    transactions = transactions.OrderBy(t => t.Date).ToList();
-                    break;
+                    return transactions.OrderBy(t => t.Date).ToList();
             }
-
-            // Calculate Total Income
-            double TotalIncome = transactions
-                .Where(i => i.Category.Type == "Income")
-                .Sum(j => j.Amount);
-            ViewBag.TotalIncome = TotalIncome.ToString("C2");
-
-            // Calculate Total Expense
-            double TotalExpense = transactions
-                .Where(i => i.Category.Type == "Expense")
-                .Sum(j => j.Amount);
-            ViewBag.TotalExpense = TotalExpense.ToString("C2");
-
-            // Calculate Balance
-            double Balance = TotalIncome - TotalExpense;
-            CultureInfo culture = CultureInfo.CreateSpecificCulture("en-US");
-            culture.NumberFormat.CurrencyNegativePattern = 1;
-            ViewBag.Balance = String.Format(culture, "{0:C2}", Balance);
-
-            // pass sorted transactions to Index.cshtml
-            return View("Index", transactions);
         }
     }
 }

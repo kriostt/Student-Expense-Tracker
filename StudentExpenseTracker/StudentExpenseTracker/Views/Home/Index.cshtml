@@ -43,7 +43,7 @@
 </div>
 
 <!-- search bar -->
-<form asp-action="Filter" method="get">
+<form asp-controller="Home" asp-action="Filter" method="get">
     <div class="row mb-4">
         <div class="form-group col-md-11">
             <label>Search Transaction: </label>
@@ -56,18 +56,17 @@
     </div>   
 
     <!-- hidden inputs to retain filter options -->
-    <input type="hidden" name="search" value="@ViewData["Search"]" />
     <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
     <input type="hidden" name="type" value="@ViewData["Type"]" />
-    <input type="hidden" name="startDate" value="@ViewData["StartDate"]" />
-    <input type="hidden" name="endDate" value="@ViewData["EndDate"]" />
+    <input type="hidden" name="startDate" value="@((ViewData["StartDate"] as DateTime?)?.ToString("yyyy-MM-dd"))" />
+    <input type="hidden" name="endDate" value="@((ViewData["EndDate"] as DateTime?)?.ToString("yyyy-MM-dd"))" />
     <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
 </form>
 
 <!-- filters -->
 <div class="row">
     <!-- filter form -->
-    <form class="col-md-10" asp-action="Filter" method="get">
+    <form class="col-md-10" asp-controller="Home" asp-action="Filter" method="get">
         <div class="row">
 
             <!-- category options -->
@@ -121,14 +120,14 @@
 
         <!-- hidden inputs to retain filter options -->
         <input type="hidden" name="search" value="@ViewData["Search"]" />
-        <input type="hidden" name="startDate" value="@ViewData["StartDate"]" />
-        <input type="hidden" name="endDate" value="@ViewData["EndDate"]" />
+        <input type="hidden" name="startDate" value="@((ViewData["StartDate"] as DateTime?)?.ToString("yyyy-MM-dd"))" />
+        <input type="hidden" name="endDate" value="@((ViewData["EndDate"] as DateTime?)?.ToString("yyyy-MM-dd"))" />
         <input type="hidden" name="sortBy" value="@ViewData["SortBy"]" />
     </form>
 
     <!-- sort by options -->
     <div class="col-md-2">
-        <form asp-action="Filter" method="get">
+        <form asp-controller="Home" asp-action="Filter" method="get">
             <select class="form-select" name="sortBy" onchange="this.form.submit()">
                 <option value="">Sort By</option>
                 <option value="dateAscending" selected="@(ViewData["SortBy"] as string == "dateAscending")">Date: Ascending</option>
@@ -141,8 +140,8 @@
             <input type="hidden" name="search" value="@ViewData["Search"]" />
             <input type="hidden" name="categoryName" value="@ViewData["CategoryName"]" />
             <input type="hidden" name="type" value="@ViewData["Type"]" />
-            <input type="hidden" name="startDate" value="@ViewData["StartDate"]" />
-            <input type="hidden" name="endDate" value="@ViewData["EndDate"]" />
+            <input type="hidden" name="startDate" value="@((ViewData["StartDate"] as DateTime?)?.ToString("yyyy-MM-dd"))" />
+            <input type="hidden" name="endDate" value="@((ViewData["EndDate"] as DateTime?)?.ToString("yyyy-MM-dd"))" />
         </form>
     </div>
 </div>
