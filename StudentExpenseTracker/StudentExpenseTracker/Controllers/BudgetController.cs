@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentExpenseTracker.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StudentExpenseTracker.Controllers
 {
-    [Authorize]
     public class BudgetController : Controller
     {
         private readonly TransactionContext _context;
@@ -18,67 +18,83 @@ namespace StudentExpenseTracker.Controllers
             _context = context;
         }
 
-        // Action method for displaying the list of budgets
+        // GET: Budget
+        // Action method to retrieve and display all budgets
         public async Task<IActionResult> Index()
         {
-            var budgets = await _context.Budgets.Include(b => b.Category).ToListAsync();
-            return View(budgets);
+            // Retrieving budgets including their associated category
+            var transactionContext = _context.Budgets.Include(b => b.Category);
+            return View(await transactionContext.ToListAsync());
         }
 
-        // Action method for displaying the form to create a new budget
+        // GET: Budget/Create
+        // Action method to display the form for creating a new budget
         public IActionResult Create()
         {
+            // Providing a SelectList for categories to be displayed in a dropdown
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name");
             return View();
         }
 
-        // Action method for handling the creation of a new budget
+        // POST: Budget/Create
+        // Action method to handle the creation of a new budget
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Budget budget)
+        public async Task<IActionResult> Create([Bind("BudgetId,Name,CategoryId,Amount")] Budget budget)
         {
+            // Checking if the model state is valid
             if (ModelState.IsValid)
             {
+                // Adding the new budget to the context and saving changes
                 _context.Add(budget);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Categories = _context.Categories.ToList();
+            // If model state is not valid, re-rendering the create view with errors
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", budget.CategoryId);
             return View(budget);
         }
 
-        // Action method for displaying the form to edit an existing budget
+        // GET: Budget/Edit/5
+        // Action method to display the form for editing a budget
         public async Task<IActionResult> Edit(int? id)
         {
+            // Checking if the provided id is null
             if (id == null)
             {
                 return NotFound();
             }
 
+            // Retrieving the budget with the provided id
             var budget = await _context.Budgets.FindAsync(id);
+            // Checking if the budget is not found
             if (budget == null)
             {
                 return NotFound();
             }
-
-            ViewBag.Categories = _context.Categories.ToList();
+            // Providing a SelectList for categories to be displayed in a dropdown
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", budget.CategoryId);
             return View(budget);
         }
 
-        // Action method for handling the editing of an existing budget
+        // POST: Budget/Edit/5
+        // Action method to handle the editing of a budget
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Budget budget)
+        public async Task<IActionResult> Edit(int id, [Bind("BudgetId,Name,CategoryId,Amount")] Budget budget)
         {
+            // Checking if the provided id matches the budget's id
             if (id != budget.BudgetId)
             {
                 return NotFound();
             }
 
+            // Checking if the model state is valid
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Updating the budget in the context and saving changes
                     _context.Update(budget);
                     await _context.SaveChangesAsync();
                 }
@@ -95,20 +111,26 @@ namespace StudentExpenseTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewBag.Categories = _context.Categories.ToList();
+            // If model state is not valid, re-rendering the edit view with errors
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "Name", budget.CategoryId);
             return View(budget);
         }
 
-        // Action method for displaying the confirmation page before deleting a budget
+        // GET: Budget/Delete/5
+        // Action method to display the confirmation page for deleting a budget
         public async Task<IActionResult> Delete(int? id)
         {
+            // Checking if the provided id is null
             if (id == null)
             {
                 return NotFound();
             }
 
-            var budget = await _context.Budgets.Include(b => b.Category).FirstOrDefaultAsync(m => m.BudgetId == id);
+            // Retrieving the budget with the provided id including its associated category
+            var budget = await _context.Budgets
+                .Include(b => b.Category)
+                .FirstOrDefaultAsync(m => m.BudgetId == id);
+            // Checking if the budget is not found
             if (budget == null)
             {
                 return NotFound();
@@ -117,17 +139,26 @@ namespace StudentExpenseTracker.Controllers
             return View(budget);
         }
 
-        // Action method for handling the deletion of a budget
-        [HttpPost]
+        // POST: Budget/Delete/5
+        // Action method to handle the deletion of a budget
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Retrieving the budget with the provided id
             var budget = await _context.Budgets.FindAsync(id);
-            _context.Budgets.Remove(budget);
+            // Checking if the budget exists
+            if (budget != null)
+            {
+                // Removing the budget from the context and saving changes
+                _context.Budgets.Remove(budget);
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        // Method to check if a budget with the provided id exists
         private bool BudgetExists(int id)
         {
             return _context.Budgets.Any(e => e.BudgetId == id);

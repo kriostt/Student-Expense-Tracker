@@ -12,6 +12,8 @@ namespace StudentExpenseTracker.Models
 
         // represents collection of categories in the database
         public DbSet<Category> Categories { get; set; }
+
+        // represents collection of budgets in the database
         public DbSet<Budget> Budgets { get; set; }
 
         // Seed initial data for categories using modelBuilder

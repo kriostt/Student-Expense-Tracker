@@ -21,7 +21,5 @@ namespace StudentExpenseTracker.Models
         [Required(ErrorMessage = "Please enter a budget amount.")]
         [Range(0, double.MaxValue, ErrorMessage = "Budget amount must be a non-negative number.")]
         public double Amount { get; set; }
-
-        // Additional properties as needed (e.g., start date, end date)
     }
 }

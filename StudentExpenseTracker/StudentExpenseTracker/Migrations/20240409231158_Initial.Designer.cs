@@ -12,7 +12,7 @@ using StudentExpenseTracker.Models;
 namespace StudentExpenseTracker.Migrations
 {
     [DbContext(typeof(TransactionContext))]
-    [Migration("20240408022136_Initial")]
+    [Migration("20240409231158_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
