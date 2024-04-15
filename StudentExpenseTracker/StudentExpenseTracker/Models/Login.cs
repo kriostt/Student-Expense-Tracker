@@ -12,9 +12,5 @@ namespace StudentExpenseTracker.Models
         [Required(ErrorMessage = "Please enter a password.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
-        // rememberme property for remembering user's login status
-        [Display(Name = "Remember Me")] 
-        public bool RememberMe { get; set; }
     }
 }
