@@ -29,7 +29,7 @@ namespace StudentExpenseTracker.Controllers
             if (ModelState.IsValid)
             {
                 // attempt to sign in the user using provided username and password
-                var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, model.RememberMe, false);
+                var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
 
                 if (result.Succeeded)
                 {
